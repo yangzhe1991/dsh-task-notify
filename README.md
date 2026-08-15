@@ -3,6 +3,7 @@
 [English](README.md) | [中文](README.zh.md)
 
 [![npm version](https://img.shields.io/npm/v/@yangzhe1991/dsh-task-notify)](https://www.npmjs.com/package/@yangzhe1991/dsh-task-notify)
+[![npm downloads](https://img.shields.io/npm/dm/@yangzhe1991/dsh-task-notify)](https://www.npmjs.com/package/@yangzhe1991/dsh-task-notify)
 [![license](https://img.shields.io/github/license/yangzhe1991/dsh-task-notify)](LICENSE)
 [![dsh-plugin](https://img.shields.io/badge/dsh-plugin-1e90ff)](https://github.com/topics/dsh-plugin)
 
