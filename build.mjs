@@ -1,5 +1,5 @@
 /**
- * dsh-task-notify 构建脚本(esbuild,无其他工具链依赖)。
+ * @yangzhe1991/dsh-task-notify 构建脚本(esbuild,无其他工具链依赖)。
  *
  * 产出两个半区(与官方 client 插件包一致):
  * - lib/index.js      node 半:宿主 Loader 直接 import 的 ESM 入口。
@@ -11,7 +11,7 @@
 import { mkdir, writeFile } from 'node:fs/promises'
 import { build } from 'esbuild'
 
-const PLUGIN_ID = 'dsh-task-notify'
+const PLUGIN_ID = '@yangzhe1991/dsh-task-notify'
 
 // 浏览器半的 externals:必须是平台模块表(CLIENT_EXTERNALS)中的成员,
 // 否则 require 会在运行时抛错。详见 dsh 仓库 packages/client/tsdown.client.ts。
@@ -66,12 +66,12 @@ await build({
 // —— 手写类型声明 ——
 await mkdir('lib/types/client', { recursive: true })
 await writeFile('lib/types/index.d.ts', [
-  '/** dsh-task-notify 插件,node 半:无宿主侧行为。 */',
+  '/** @yangzhe1991/dsh-task-notify 插件,node 半:无宿主侧行为。 */',
   'export declare function apply(): void;',
   '',
 ].join('\n'))
 await writeFile('lib/types/client/index.d.ts', [
-  '/** dsh-task-notify 插件,浏览器半。 */',
+  '/** @yangzhe1991/dsh-task-notify 插件,浏览器半。 */',
   "import type { ClientContext } from '@deepseek-ai/dsh-client-runtime/client';",
   '/** 需要的 client 服务:sessions、slots。 */',
   "export declare const inject: string[];",
@@ -80,4 +80,4 @@ await writeFile('lib/types/client/index.d.ts', [
   '',
 ].join('\n'))
 
-console.log('[dsh-task-notify] build done: lib/index.js, lib/client.js, lib/types/*.d.ts')
+console.log('[@yangzhe1991/dsh-task-notify] build done: lib/index.js, lib/client.js, lib/types/*.d.ts')

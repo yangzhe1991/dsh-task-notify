@@ -1,5 +1,5 @@
 /**
- * dsh-task-notify 插件,node 半(宿主侧)。
+ * @yangzhe1991/dsh-task-notify 插件,node 半(宿主侧)。
  *
  * 本插件没有宿主侧行为:浏览器半通过 package.json 的 `dsh.client` 声明
  * 和 `exports["./client"]` 被发现并注入 Web UI(参照官方

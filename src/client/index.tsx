@@ -1,5 +1,5 @@
 /**
- * dsh-task-notify 插件,浏览器半。
+ * @yangzhe1991/dsh-task-notify 插件,浏览器半。
  *
  * 职责(纯逻辑,不渲染任何可见 UI):
  * 1. 监听两类"任务完成":

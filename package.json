@@ -1,7 +1,10 @@
 {
-  "name": "dsh-task-notify",
+  "name": "@yangzhe1991/dsh-task-notify",
   "version": "0.1.0",
-  "description": "DSH Web 插件:后台任务完成时播放提示音;页面不在当前标签时修改标签页标题提醒",
+  "description": "DSH Web plugin: completion chime and tab-title alert when agent turns or background jobs finish",
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "main": "lib/index.js",
   "types": "lib/types/index.d.ts",
