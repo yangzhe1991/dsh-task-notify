@@ -24,7 +24,7 @@
  */
 import { useEffect, useMemo, useRef } from 'react'
 import type { ClientContext, JobView } from '@deepseek-ai/dsh-client-runtime/client'
-import type { GlobalStandardProps, PropsRuntime } from '@deepseek-ai/dsh-client-ui-slots'
+import type { GlobalStandardProps } from '@deepseek-ai/dsh-client-ui-slots'
 // 触发 SlotMap 声明合并:shell.overlay 由 layout、conversation.session.header.actions 由 conversation 声明。
 import type {} from '@deepseek-ai/dsh-client-ui-layout/client'
 import type {} from '@deepseek-ai/dsh-client-ui-conversation/client'
@@ -219,6 +219,39 @@ function TaskNotifyJobs({ useSessions }: GlobalStandardProps) {
 }
 
 /**
+ * chat 快照的最小形状(新前端 useChat / 旧前端 useSession((s) => s.chat))。
+ * 新前端(0.1.2-alpha+)把 turnTimings 收进 chat 快照的 legacy 兼容层
+ * (legacy.turnTimings),turn-error 节点标记失败回合;旧前端(0.1.0-rc.x)
+ * 则是会话快照顶层 turnTimings + lastAgentError 字段。
+ */
+interface ChatLike {
+  nodes: {
+    get(key: string): { kind: string; data: unknown } | undefined
+    values?(): Iterable<{ kind: string; data: unknown }>
+  }
+  legacy?: {
+    turnTimings: ReadonlyMap<number, { startTime: number; endTime?: number }>
+  }
+}
+
+/**
+ * 会话标准 props 的最小形状:新前端(0.1.2-alpha+)的 chat 快照改由
+ * dsh-client-ui-chat 通过 uiSession.provide({ hooks: ["chat"] }) 注册成
+ * 会话标准 hook useChat;旧前端(0.1.0-rc.x)则挂在会话快照顶层。
+ * 两处都保留旧路径兜底,同一环境内恒走同一分支,不违反 hook 顺序规则。
+ */
+interface HeaderActionsProps {
+  sessionId: string
+  useSession<T>(selector: (snapshot: {
+    chat?: ChatLike
+    turnTimings?: ReadonlyMap<number, { startTime: number; endTime?: number }>
+    lastAgentError?: string | null
+    openState?: string
+  }) => T): T
+  useChat?: <T>(selector: (snapshot: ChatLike) => T) => T
+}
+
+/**
  * 当前会话回合监听组件(session 作用域):订阅 turnTimings,
  * 检测新的 turn/end(agent 跑完一轮:正常回复或报错都会发出)。
  * 渲染 null。
@@ -228,15 +261,33 @@ function TaskNotifyJobs({ useSessions }: GlobalStandardProps) {
  * 的第一帧)只建立"已结束回合"快照,不提醒;只有快照建立后新出现的
  * endTime 才算回合完成。
  */
-function TaskNotifyTurns({ useSession, sessionId }: PropsRuntime<'conversation.session.header.actions'>) {
+function TaskNotifyTurns({ useSession, useChat, sessionId }: HeaderActionsProps) {
   // turn → { startTime, endTime? } ;endTime 出现即回合完成。
-  const turnTimings = useSession((state) => state.turnTimings)
+  // 新前端:turnTimings 在 chat 快照的 legacy 层;旧前端:会话快照顶层。
+  const chat = useChat !== undefined ? useChat((state) => state) : undefined
+  const turnTimings = chat?.legacy?.turnTimings ?? useSession((state) => state.turnTimings)
+  // 旧前端近似失败判定的字段(新前端用 chat 快照里的 turn-error 节点,见下)。
   const lastAgentError = useSession((state) => state.lastAgentError)
   // 会话窗口打开状态:loading 期间快照内容不可信,不比较。
   const openState = useSession((state) => state.openState)
 
   useAudioUnlock()
   useVisibilityClear()
+
+  /**
+   * 新前端的失败回合集合:chat 快照中 kind === 'turn-error' 的节点,
+   * 轮归属看节点 data.turn。新前端没有 lastAgentError 字段,用这个
+   * 更精确的替代(报错回合结束时官方会产出 turn-error 节点)。
+   */
+  const failedTurns = useMemo(() => {
+    const set = new Set<number>()
+    for (const node of chat?.nodes.values?.() ?? []) {
+      if (node.kind !== 'turn-error') continue
+      const turn = (node.data as { turn?: unknown } | null | undefined)?.turn
+      if (typeof turn === 'number') set.add(turn)
+    }
+    return set
+  }, [chat])
 
   /** 已建快照:记录"快照所属会话"与"当时已结束的回合集合"。 */
   const snapshotRef = useRef<{ sessionId: string; ends: ReadonlySet<number> } | null>(null)
@@ -246,9 +297,10 @@ function TaskNotifyTurns({ useSession, sessionId }: PropsRuntime<'conversation.s
       snapshotRef.current = null
       return
     }
-    // 当前已结束的回合集合。
+    // 当前已结束的回合集合(turnTimings 缺失时按空处理:首帧只建快照,
+    // 不提醒,与旧前端的兜底行为一致)。
     const ends = new Set<number>()
-    for (const [turn, timing] of turnTimings) {
+    for (const [turn, timing] of turnTimings ?? []) {
       if (timing.endTime !== undefined) ends.add(turn)
     }
     const snapshot = snapshotRef.current
@@ -263,13 +315,14 @@ function TaskNotifyTurns({ useSession, sessionId }: PropsRuntime<'conversation.s
     for (const turn of ends) {
       if (!snapshot.ends.has(turn)) {
         completed += 1
-        // lastAgentError 非空近似认为本回合失败(报错回合结束时会置位)。
-        if (lastAgentError !== null) success = false
+        // 失败判定:新前端看该轮有没有 turn-error 节点;旧前端退回
+        // lastAgentError(报错回合结束时会置位,近似口径)。
+        if (failedTurns.has(turn) || (chat === undefined && lastAgentError !== null)) success = false
       }
     }
     snapshotRef.current = { sessionId, ends }
     for (let i = 0; i < completed; i += 1) notify(success)
-  }, [turnTimings, lastAgentError, openState, sessionId])
+  }, [turnTimings, lastAgentError, openState, sessionId, failedTurns, chat])
 
   return null
 }

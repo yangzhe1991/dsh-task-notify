@@ -1,6 +1,6 @@
 {
   "name": "@yangzhe1991/dsh-task-notify",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "DSH Web plugin: completion chime and tab-title alert when agent turns or background jobs finish",
   "publishConfig": {
     "access": "public"

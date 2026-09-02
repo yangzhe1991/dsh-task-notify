@@ -11,6 +11,11 @@ A DSH (DeepSeek Harness) browser plugin that tells you when your agent finishes 
 
 ---
 
+## Compatibility
+
+- **dsh ≥ 0.1.2-alpha.4** — supported since **0.1.1**. Turn timings now come from the chat snapshot's legacy layer via the session-standard `useChat` hook, and completed-turn failures are detected from `turn-error` nodes; the legacy paths are retained for older dsh.
+- **dsh 0.1.0-rc.x** — still supported via the legacy snapshot paths.
+
 ## Install (30 seconds)
 
 Prereqs: the `dsh` CLI ([DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)).
