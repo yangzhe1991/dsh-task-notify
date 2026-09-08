@@ -23,11 +23,27 @@
  * 标题提醒不受影响。
  */
 import { useEffect, useMemo, useRef } from 'react'
-import type { ClientContext, JobView } from '@deepseek-ai/dsh-client-runtime/client'
+// 官方模式:ClientContext 就是 cordis 的 Context(服务经声明合并挂在上面)。
+// 旧版本从这里导入过 @deepseek-ai/dsh-client-runtime/client,该包已随 dsh 0.1.2 停产。
+import type { Context as ClientContext } from '@deepseek-ai/cordis'
 import type { GlobalStandardProps } from '@deepseek-ai/dsh-client-ui-slots'
+// 声明合并:ctx.slots 由 ui-renderer、GlobalStandardProps.useSessions 由
+// ui-session 挂载(官方同款导入;useSessions 在旧 runtime 包里,已停产)。
+import type {} from '@deepseek-ai/dsh-client-ui-renderer/client'
+import type {} from '@deepseek-ai/dsh-client-ui-session/client'
 // 触发 SlotMap 声明合并:shell.overlay 由 layout、conversation.session.header.actions 由 conversation 声明。
 import type {} from '@deepseek-ai/dsh-client-ui-layout/client'
 import type {} from '@deepseek-ai/dsh-client-ui-conversation/client'
+
+/**
+ * 后台任务视图的最小形状(鸭子类型,不用官方类型):
+ * 官方实现见 @deepseek-ai/dsh-api-session-controller 的 SessionJob,
+ * 本插件只消费 id 与 status 两个字段,字段子集声明保证结构兼容。
+ */
+interface JobView {
+  readonly id: string
+  readonly status: 'running' | 'stopping' | 'completed' | 'killed' | 'failed'
+}
 
 // —— 可调参数(如需可配置,可在此修改默认值)——
 /** 任务完成时是否播放提示音。 */

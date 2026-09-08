@@ -11,6 +11,11 @@ DSH(DeepSeek Harness)浏览器插件:agent 干完活时提醒你 —— 播放�
 
 ---
 
+## 兼容性
+
+- **dsh ≥ 0.1.2-alpha.4** — 自 **0.1.1** 起支持。回合时间戳现从聊天快照的 legacy 层经会话标准的 `useChat` hook 获取,回合失败从 `turn-error` 节点检测;旧版 dsh 保留 legacy 路径。自 **0.1.2** 起在 **dsh 0.1.3-alpha.2** 上验证通过。
+- **dsh 0.1.0-rc.x** — 仍通过旧版快照路径支持。
+
 ## 安装(30 秒)
 
 前置:`dsh` 命令行([DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness))。
