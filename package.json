@@ -1,7 +1,7 @@
 {
   "name": "@yangzhe1991/dsh-task-notify",
   "version": "0.2.0",
-  "description": "DSH Web plugin: chime and tab-title alert when a session's work really finishes (agent idle, no running jobs) or a dialog waits for your choice",
+  "description": "[RETIRED] Merged into @yangzhe1991/dsh-web-enhance (0.2.0+) — this package is deprecated and receives no further updates. | [已停维护] 功能已并入 @yangzhe1991/dsh-web-enhance(0.2.0 起),本包已 deprecated、不再更新",
   "publishConfig": {
     "access": "public"
   },

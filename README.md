@@ -1,5 +1,16 @@
 # dsh-task-notify
 
+> ## ⚠️ This plugin is retired — it now lives inside [dsh-web-enhance](https://github.com/yangzhe1991/dsh-web-enhance)
+>
+> The completion alert (chime + tab-title alert) is a built-in feature of **[`@yangzhe1991/dsh-web-enhance`](https://www.npmjs.com/package/@yangzhe1991/dsh-web-enhance)** since **0.2.0** — same decision rules, plus an on/off switch in Settings → General, and it comes bundled with four other web-UI enhancements.
+>
+> ```sh
+> dsh plugin --profile web remove @yangzhe1991/dsh-task-notify
+> dsh plugin --profile web add @yangzhe1991/dsh-web-enhance
+> ```
+>
+> then restart the Web GUI and refresh the tab. This repository stays online as a historical record; it receives no further updates, and the npm package is deprecated.
+
 [English](README.md) | [中文](README.zh.md)
 
 [![npm version](https://img.shields.io/npm/v/@yangzhe1991/dsh-task-notify)](https://www.npmjs.com/package/@yangzhe1991/dsh-task-notify)
@@ -11,29 +22,20 @@ A DSH (DeepSeek Harness) browser plugin that tells you when your agent is really
 
 ---
 
-## Compatibility
+## Compatibility (historical, up to 0.2.0)
 
 - **dsh ≥ 0.1.7-rc.2** — supported since **0.2.0**; verified against **dsh 0.1.7-rc.2** since **0.2.0**.
   The watcher reads three current Client contracts: the session-list snapshot (`useSessions`: `ids` / `byId.origin`), the per-session UI status (`useSessionStatus`: agent `running` + `pendingInteraction`), and on-demand job rosters from the `ctx.jobs` client service (`watchRows` → `state.rows`).
 - **dsh ≤ 0.1.6 / 0.1.0-rc.x** — not supported. Those versions carried job rosters inside the session-list snapshot (`jobsBySession`) and dialogs behind `useSessionPendingInteraction`, both removed in 0.1.7; this plugin injects `jobs` as a Client service, so it needs the job controller 0.1.7 introduced.
 
-## Install (30 seconds)
-
-Prereqs: the `dsh` CLI ([DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)).
+## Migrate (was: install)
 
 ```sh
-dsh plugin --profile web add @yangzhe1991/dsh-task-notify
+dsh plugin --profile web remove @yangzhe1991/dsh-task-notify
+dsh plugin --profile web add @yangzhe1991/dsh-web-enhance
 ```
 
-Then restart the Web GUI and refresh the browser tab. That's it — the package ships prebuilt artifacts, so nothing compiles on your machine and no allowlist is needed. `dsh plugin` auto-appends the bundle to your profile's `dsh.profile.bundles`.
-
-> **Other install methods** (usually not needed):
-
-> | Method | Command | Builds on install | Notes |
-> |---|---|---|---|
-> | npm registry **(recommended)** | `dsh plugin --profile web add @yangzhe1991/dsh-task-notify` | No | Prebuilt, quickest |
-> | tarball | `dsh plugin --profile web add ./dsh-task-notify-0.2.0.tgz` | No | Offline-friendly |
-> | git | `dsh plugin --profile web add github:yangzhe1991/dsh-task-notify` | Yes (via `prepare`) | Requires one-time `allowBuilds` in `pnpm-workspace.yaml` |
+Restart the Web GUI and refresh the browser tab. Everything this plugin did is now part of `dsh-web-enhance` (0.2.0+), together with turn navigation, thinking-chain default-expand, a session cost meter and "open files in the system app".
 
 ## What it does
 
@@ -109,9 +111,7 @@ npx tsc --noEmit     # type-check
 
 ## Uninstall
 
-```sh
-dsh plugin --profile web remove @yangzhe1991/dsh-task-notify
-```
+Replaced by the migration commands above — that is, remove this plugin and install `dsh-web-enhance` instead.
 
 ## License
 

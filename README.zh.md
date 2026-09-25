@@ -1,5 +1,16 @@
 # dsh-task-notify
 
+> ## ⚠️ 本插件已停维护 —— 功能已并入 [dsh-web-enhance](https://github.com/yangzhe1991/dsh-web-enhance)
+>
+> 「跑完提醒」(提示音 + 标签页标题)自 **0.2.0** 起是 **[`@yangzhe1991/dsh-web-enhance`](https://www.npmjs.com/package/@yangzhe1991/dsh-web-enhance)** 的内置功能 —— 判定口径不变,另外多了「设置 → 通用」里的开关,并顺带带上另外四个 Web UI 增强功能。
+>
+> ```sh
+> dsh plugin --profile web remove @yangzhe1991/dsh-task-notify
+> dsh plugin --profile web add @yangzhe1991/dsh-web-enhance
+> ```
+>
+> 然后重启 Web GUI、刷新标签页即可。本仓库仅作历史留存,不再更新;npm 包已标记 deprecated。
+
 [English](README.md) | [中文](README.zh.md)
 
 [![npm version](https://img.shields.io/npm/v/@yangzhe1991/dsh-task-notify)](https://www.npmjs.com/package/@yangzhe1991/dsh-task-notify)
@@ -11,29 +22,20 @@ DSH(DeepSeek Harness)浏览器插件:agent **真的**干完活时提醒你 —�
 
 ---
 
-## 兼容性
+## 兼容性(历史记录,截至 0.2.0)
 
 - **dsh ≥ 0.1.7-rc.2** — 自 **0.2.0** 起支持;自 **0.2.0** 起在 **dsh 0.1.7-rc.2** 上验证通过。
   监视器读三处当前客户端契约:会话列表快照(`useSessions`:`ids` / `byId.origin`)、每会话 UI 状态(`useSessionStatus`:agent `running` + `pendingInteraction`)、以及 `ctx.jobs` 客户端服务的按需任务列表(`watchRows` → `state.rows`)。
 - **dsh ≤ 0.1.6 / 0.1.0-rc.x** — 不再支持。那些版本把任务列表放在会话列表快照里(`jobsBySession`)、弹框挂在 `useSessionPendingInteraction` 上,两者都在 0.1.7 移除;本插件把 `jobs` 声明为注入的客户端服务,依赖 0.1.7 引入的任务控制器。
 
-## 安装(30 秒)
-
-前置:`dsh` 命令行([DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness))。
+## 迁移(原「安装」)
 
 ```sh
-dsh plugin --profile web add @yangzhe1991/dsh-task-notify
+dsh plugin --profile web remove @yangzhe1991/dsh-task-notify
+dsh plugin --profile web add @yangzhe1991/dsh-web-enhance
 ```
 
-然后重启 Web GUI、刷新浏览器标签,完事。包内自带预构建产物,本机不需要编译、不需要任何白名单;`dsh plugin` 会自动把 bundle 追加到 profile 的 `dsh.profile.bundles`。
-
-> **其他安装方式**(通常用不上):
-
-> | 方式 | 命令 | 安装时是否构建 | 说明 |
-> |---|---|---|---|
-> | npm registry(**推荐**) | `dsh plugin --profile web add @yangzhe1991/dsh-task-notify` | 否 | 预构建,最快 |
-> | tarball | `dsh plugin --profile web add ./dsh-task-notify-0.2.0.tgz` | 否 | 适合离线分发 |
-> | git | `dsh plugin --profile web add github:yangzhe1991/dsh-task-notify` | 是(`prepare` 脚本) | 首次需在 `pnpm-workspace.yaml` 加一次 `allowBuilds` |
+重启 Web GUI、刷新浏览器标签即可。本插件的全部行为现在都在 `dsh-web-enhance`(0.2.0 起)里,另外还带逐轮导航、思维链默认展开、会话价格统计与「文件用系统程序打开」。
 
 ## 功能
 
@@ -109,9 +111,7 @@ npx tsc --noEmit     # 类型检查
 
 ## 卸载
 
-```sh
-dsh plugin --profile web remove @yangzhe1991/dsh-task-notify
-```
+已被上面的迁移命令取代 —— 即卸载本插件、改装 `dsh-web-enhance`。
 
 ## 许可证
 
